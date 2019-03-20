@@ -126,4 +126,13 @@ public extension Geometry {
         guard GEOSArea_r(GEOS_HANDLE, storage.GEOSGeom, &area) == 1 else { return nil }
         return area
     }
+     
+   func polygonize() -> Geometry? {
+        let geometriesPointer = UnsafeMutablePointer<OpaquePointer?>.allocate(capacity: 1)
+        defer { geometriesPointer.deallocate() }
+        geometriesPointer[0] = storage.GEOSGeom;
+        guard let abc = GEOSPolygonize_r(GEOS_HANDLE,geometriesPointer, UInt32(1)) else{return nil}
+        return Geometry.create(storage: GeometryStorage(GEOSGeom: abc, parent: nil));
+    }
+
 }
